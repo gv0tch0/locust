@@ -1,6 +1,8 @@
 LOngest Common sUbSTring.
 -------------------------
 
+[![Build Status](https://travis-ci.org/gv0tch0/locust.png)](https://travis-ci.org/gv0tch0/locust)
+
 #### Buidling
 The implementation is in java. You gotta use [maven](http://maven.apache.org/ "Maven Home"). Sorry...
 
