@@ -8,6 +8,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 
 /**
@@ -27,7 +28,6 @@ public class GstLcsTest {
         LCS.lcs(null);
     }
     
-    
     @Test(expected=NullPointerException.class)
     public void nullWord() {
         Collection<String> words = new ArrayList<String>();
@@ -35,6 +35,11 @@ public class GstLcsTest {
         LCS.lcs(words);
     }
 
+    @Test
+    public void emptyWords() {
+        assertEquals(Collections.<String>emptySet(), LCS.lcs(Collections.<String>emptyList()));
+    }
+    
     @Test
     public void oneWord() {
         Collection<String> words = new ArrayList<String>();
