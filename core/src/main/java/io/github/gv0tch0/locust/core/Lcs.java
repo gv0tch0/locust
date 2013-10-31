@@ -21,5 +21,5 @@ public interface Lcs {
      * @throws NullPointerException When the given words collection is <code>null</code>
      *         or when it contains one or more <code>null</code> words.
      */
-    Collection<String> lcs(Collection<String> words);
+    Set<String> lcs(Collection<String> words);
 }

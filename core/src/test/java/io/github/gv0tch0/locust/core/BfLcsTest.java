@@ -12,15 +12,15 @@ import java.util.Collections;
 import java.util.HashSet;
 
 /**
- * Tests the {@link GstLcs}.
+ * Tests the {@link BfLcs}.
  * @author Nik Kolev
  */
-public class GstLcsTest {
+public class BfLcsTest {
     private static Lcs LCS;
     
     @BeforeClass
     public static void injectLcs() {
-        LCS = new GstLcs();
+        LCS = new BfLcs();
     }
     
     @Test(expected=NullPointerException.class)
@@ -55,7 +55,7 @@ public class GstLcsTest {
         assertEquals(new HashSet<String>(Arrays.asList("foo")), LCS.lcs(words));
     }
 
-    //@Test
+    @Test
     public void oneLcs() {
         Collection<String> words = new ArrayList<String>();
         words.add("comcast");
@@ -64,7 +64,7 @@ public class GstLcsTest {
         assertEquals(new HashSet<String>(Arrays.asList("cast")), LCS.lcs(words));
     }
 
-    //@Test
+    @Test
     public void multiLcs() {
         Collection<String> words = new ArrayList<String>();
         words.add("stormcast");
