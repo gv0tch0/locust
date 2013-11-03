@@ -10,11 +10,12 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class LocustService {
+    private static final String S_EMPTY = "";
     // Package-protected for unit test usage.
-    static final String BAD_ARG_MESSAGE = "The collection of strings {0}.";
+    static final String BAD_ARG_MESSAGE = "The collection of strings %s.";
     static final String BAD_ARG_EMPTY_COLLECTION = "is empty";
-    static final String BAD_ARG_EMPTY_WORD = "contains an empty word";
     static final String BAD_ARG_DUPLICATES = "contains duplicates";
+    static final String BAD_ARG_EMPTY_WORD = "contains an empty word";
     
     @Inject
     private Lcs _lcs;
@@ -39,7 +40,7 @@ public class LocustService {
         if (sWords.size() < words.size()) {
             throw new IllegalArgumentException(String.format(BAD_ARG_MESSAGE, BAD_ARG_DUPLICATES));
         }
-        if (sWords.contains(null) || sWords.contains("")) {
+        if (sWords.contains(null) || sWords.contains(S_EMPTY)) {
             throw new IllegalArgumentException(String.format(BAD_ARG_MESSAGE, BAD_ARG_EMPTY_WORD));
         }
         
