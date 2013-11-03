@@ -104,19 +104,23 @@
       <dependency>
         <groupId>io.github.gv0tch0.locust</groupId>
         <artifactId>locust-core</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>io.github.gv0tch0.locust</groupId>
         <artifactId>locust-service</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>${project.version}</version>
       </dependency>
-      <!-- This dependency transitively pulls the JAX-RS API
-           and all necessary Jersey (JAX-RS implementation I
-           am using) components. -->
+      <!-- JAX-RS implementation. -->
       <dependency>
         <groupId>org.glassfish.jersey.containers</groupId>
         <artifactId>jersey-container-servlet</artifactId>
+        <version>2.4</version>
+      </dependency>
+      <!-- JSON media support. -->
+      <dependency>
+        <groupId>org.glassfish.jersey.media</groupId>
+        <artifactId>jersey-media-moxy</artifactId>
         <version>2.4</version>
       </dependency>
       <dependency>
