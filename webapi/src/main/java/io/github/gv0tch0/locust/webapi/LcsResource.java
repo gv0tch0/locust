@@ -28,9 +28,14 @@ public class LcsResource {
     
     /**
      * @param request The {@link LcsRequest}.
-     * @return A 200 (OK) HTTP response with a body that contains the JSON document representation
-     *         of a {@link LcsResponse} when the given {@code request} does not violate the validation
+     * @return A 200 (OK) response with a body that contains the JSON document representation of a
+     *         {@link LcsResponse} when the given {@code request} does not violate the validation
      *         rules discussed next.
+     *         A 415 (Unsupported Media Type) response when the request's {@code Content-type} header
+     *         does not carry a value of {@code application/json}.
+     *         A 400 (Bad Request) response when the request does not contain a JSON document in its
+     *         body, contains a JSON document that is syntactically invalid, or represents a request
+     *         that contains no words, one or more empty words, or duplicate words.
      */
     @POST
     public Response longestCommonSubstring(LcsRequest request) {
