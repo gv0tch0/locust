@@ -1,6 +1,10 @@
 package io.github.gv0tch0.locust.functest;
 
+import static java.util.AbstractMap.SimpleImmutableEntry;
+import static java.util.Map.Entry;
 import static org.junit.Assert.assertEquals;
+
+import com.google.gson.Gson;
 
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -13,6 +17,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -49,125 +55,109 @@ public class LcsFuncTest {
                             .addHeader(HttpHeaders.CONTENT_TYPE, "application/xml")
                             .execute()
                             .handleResponse(new LcsResponseHandler())
-                            .intValue());
+                            .getKey().intValue());
     }
     
     @Test
     public void noRequestBody() throws IOException {
-        assertEquals(HttpStatus.SC_BAD_REQUEST,
-                     Request.Post(LCS_URL)
-                            .addHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON)
-                            .addHeader(HttpHeaders.ACCEPT, APPLICATION_JSON)
-                            .execute()
-                            .handleResponse(new LcsResponseHandler())
-                            .intValue());
+        postLcs("", HttpStatus.SC_BAD_REQUEST);
     }
     
     @Test
     public void syntacticallyIncorrectJson() throws IOException {
-        assertEquals(HttpStatus.SC_BAD_REQUEST,
-                     Request.Post(LCS_URL)
-                            .addHeader(HttpHeaders.ACCEPT, APPLICATION_JSON)
-                            .bodyString("foo", ContentType.APPLICATION_JSON)
-                            .execute()
-                            .handleResponse(new LcsResponseHandler())
-                            .intValue());
+        postLcs("foo", HttpStatus.SC_BAD_REQUEST);
     }
     
     @Test
     public void noWords() throws IOException {
-        String noWords = "{\"setOfStrings\": []}";
-        assertEquals(HttpStatus.SC_BAD_REQUEST,
-                     Request.Post(LCS_URL)
-                            .addHeader(HttpHeaders.ACCEPT, APPLICATION_JSON)
-                            .bodyString(noWords, ContentType.APPLICATION_JSON)
-                            .execute()
-                            .handleResponse(new LcsResponseHandler())
-                            .intValue());
+        postLcs("{\"setOfStrings\": []}", HttpStatus.SC_BAD_REQUEST);
     }
     
     @Test
     public void emptyWord() throws IOException {
-        String emptyWord = "{\"setOfStrings\": [ {\"value\": \"foo\"} , {\"value\": \"\"} ]}";
-        assertEquals(HttpStatus.SC_BAD_REQUEST,
-                     Request.Post(LCS_URL)
-                            .addHeader(HttpHeaders.ACCEPT, APPLICATION_JSON)
-                            .bodyString(emptyWord, ContentType.APPLICATION_JSON)
-                            .execute()
-                            .handleResponse(new LcsResponseHandler())
-                            .intValue());
+        postLcs("{\"setOfStrings\": [ {\"value\": \"foo\"} , {\"value\": \"\"} ]}",
+                HttpStatus.SC_BAD_REQUEST);
     }
     
     @Test
     public void duplicateWords() throws IOException {
-        String dupWord = "{\"setOfStrings\": [ {\"value\": \"foo\"} , {\"value\": \"foo\"} ]}";
-        assertEquals(HttpStatus.SC_BAD_REQUEST,
-                     Request.Post(LCS_URL)
-                            .addHeader(HttpHeaders.ACCEPT, APPLICATION_JSON)
-                            .bodyString(dupWord, ContentType.APPLICATION_JSON)
-                            .execute()
-                            .handleResponse(new LcsResponseHandler())
-                            .intValue());
+        postLcs("{\"setOfStrings\": [ {\"value\": \"foo\"} , {\"value\": \"foo\"} ]}",
+                HttpStatus.SC_BAD_REQUEST);
     }
     
     @Test
     public void oneWord() throws IOException {
-        String oneWord = "{\"setOfStrings\": [ {\"value\": \"foo\"} ]}";
-        assertEquals(HttpStatus.SC_OK,
-                     Request.Post(LCS_URL)
-                            .addHeader(HttpHeaders.ACCEPT, APPLICATION_JSON)
-                            .bodyString(oneWord, ContentType.APPLICATION_JSON)
-                            .execute()
-                            .handleResponse(new LcsResponseHandler())
-                            .intValue());
+        String entity = "{\"setOfStrings\": [ {\"value\": \"foo\"} ]}";
+        assertEquals("foo", postLcs(entity).getValue().lcs.get(0).value);
     }
     
     @Test
     public void noLcs() throws IOException {
-        String oneWord = "{\"setOfStrings\": [ {\"value\": \"foo\"} , {\"value\": \"bar\"} ]}";
-        assertEquals(HttpStatus.SC_OK,
-                     Request.Post(LCS_URL)
-                            .addHeader(HttpHeaders.ACCEPT, APPLICATION_JSON)
-                            .bodyString(oneWord, ContentType.APPLICATION_JSON)
-                            .execute()
-                            .handleResponse(new LcsResponseHandler())
-                            .intValue());
+        String entity = "{\"setOfStrings\": [ {\"value\": \"foo\"} , {\"value\": \"bar\"} ]}";
+        assertEquals(0, postLcs(entity).getValue().lcs.size());
     }
     
     @Test
     public void oneLcs() throws IOException {
-        String oneLcs = "{\"setOfStrings\": [ {\"value\": \"abc\"} , {\"value\": \"bcd\"} ]}";
-        assertEquals(HttpStatus.SC_OK,
-                     Request.Post(LCS_URL)
-                            .addHeader(HttpHeaders.ACCEPT, APPLICATION_JSON)
-                            .bodyString(oneLcs, ContentType.APPLICATION_JSON)
-                            .execute()
-                            .handleResponse(new LcsResponseHandler())
-                            .intValue());
+        String entity = "{\"setOfStrings\": [ {\"value\": \"abc\"} , {\"value\": \"bcd\"} ]}";
+        Entry<Integer,LcsResponse> response = postLcs(entity);
+        assertEquals("bc", response.getValue().lcs.get(0).value);
     }
     
     @Test
     public void multiLcs() throws IOException {
-        String multiLcs = "{\"setOfStrings\": [ {\"value\": \"bartender\"} , {\"value\": \"banter\"} ]}";
-        assertEquals(HttpStatus.SC_OK,
-                     Request.Post(LCS_URL)
-                            .addHeader(HttpHeaders.ACCEPT, APPLICATION_JSON)
-                            .bodyString(multiLcs, ContentType.APPLICATION_JSON)
-                            .execute()
-                            .handleResponse(new LcsResponseHandler())
-                            .intValue());
+        String entity = "{\"setOfStrings\": [ {\"value\": \"bartender\"} , {\"value\": \"banter\"} ]}";
+        Entry<Integer,LcsResponse> response = postLcs(entity);
+        List<LcsResponsePair> lcs = response.getValue().lcs;
+        assertEquals(3, lcs.size());
+        assertEquals("ba", lcs.get(0).value);
+        assertEquals("er", lcs.get(1).value);
+        assertEquals("te", lcs.get(2).value);
     }
     
-    // TODO Parse the response body when the reponse is a 200 OK to pull out the
-    //      longest common substring(s) result and thus facilitate deeper validation
-    //      (well, on the other hand the guts of the service are covered by unit
-    //      tests in the "guts" modules).
-    private static class LcsResponseHandler implements ResponseHandler<Integer> {
+    private Entry<Integer,LcsResponse> postLcs(String entity) throws IOException {
+        return postLcs(entity, HttpStatus.SC_OK);
+    }
+    
+    private Entry<Integer,LcsResponse> postLcs(String entity, int expectedCode) throws IOException {
+        Entry<Integer,LcsResponse> response = Request.Post(LCS_URL)
+                                                     .addHeader(HttpHeaders.ACCEPT, APPLICATION_JSON)
+                                                     .bodyString(entity, ContentType.APPLICATION_JSON)
+                                                     .execute()
+                                                     .handleResponse(new LcsResponseHandler());
+        assertEquals(expectedCode, response.getKey().intValue());
+        return response;
+    }
+
+    // Using Map.Entry to represent the "response code"-"parsed response entity" tuple. Not really
+    // a key value pair, just did not feel like creating a Tuple2 class.
+    private static class LcsResponseHandler implements ResponseHandler<Entry<Integer,LcsResponse>> {
         @Override
-        public Integer handleResponse(HttpResponse response) throws ClientProtocolException,
-                                                                    IOException {
-            return response.getStatusLine().getStatusCode();
+        public Entry<Integer,LcsResponse> handleResponse(HttpResponse response)
+                        throws ClientProtocolException, IOException {
+            int rc = response.getStatusLine().getStatusCode();
+            LcsResponse re = null;
+            if (rc == HttpStatus.SC_OK) {
+                InputStreamReader isr = null;
+                try {
+                    isr = new InputStreamReader(response.getEntity().getContent());
+                    re = new Gson().fromJson(isr, LcsResponse.class);
+                }
+                finally {
+                    if (isr != null) {
+                        isr.close();
+                    }
+                }
+            }
+            return new SimpleImmutableEntry<Integer,LcsResponse>(rc, re);
         }
     }
     
+    private static class LcsResponse {
+        List<LcsResponsePair> lcs;
+    }
+    
+    private static class LcsResponsePair {
+        String value;
+    }
 }
