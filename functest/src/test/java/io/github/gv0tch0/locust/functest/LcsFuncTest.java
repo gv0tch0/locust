@@ -15,6 +15,10 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Properties;
 
+/**
+ * Exercises the service in its full glory.
+ * @author Nik Kolev
+ */
 public class LcsFuncTest {
     private static final String PROPERTIES_FILENAME = "functest.properties";
     private static final String LCS_URL_KEY         = "lcs.url";
