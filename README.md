@@ -86,7 +86,7 @@ is the substrings ordered alphabetically:
 
 #### For invalid requests
 
-The service responds with a `400 Bad Request` when the request:
+The service responds with a `400 Bad Request` response when the request:
 - Does not contain a JSON document in its body.
 - Contains a syntactically incorrect JSON document.
 - Represents a longest common substring request that:
