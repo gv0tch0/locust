@@ -11,7 +11,9 @@ import javax.inject.Singleton;
 import javax.ws.rs.ApplicationPath;
 
 /**
- * Configuration (web.xml, etc.), but in code.
+ * Configuration (web.xml, etc.), but in code. The path is intentionally left
+ * 'blank' both here and in the {@code LcsResource} to allow for the functionality
+ * to be accessible right at the application's context root.
  * @author Nik Kolev
  */
 @ApplicationPath("/")
