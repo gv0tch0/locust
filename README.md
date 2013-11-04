@@ -100,7 +100,7 @@ The service responds with a `415 Unsupported Media Type` response when the `Cont
 
 The `core` and `service` modules are covered by [JUnit](http://junit.org) tests. The `functest` module exercises the service using the service's JSON API. The `functest` module is not part of the default `mvn` profile. Building it, means sending requests against a live deployment. It uses [HttpClient](http://hc.apache.org/httpclient-3.x/) to send the requests and `JUnit` to validate the responses.
 
-The LCS service URL endpoint is configured in the [functest.properties](/functest/src/test/resources/io/github/gv0tvh0/locust/functest/functest.properties) file. If the URL of the service that is to be exercised is different (e.g. does not run on localhost) this file needs to be updated before running the tests.
+The LCS service URL endpoint is configured in the [functest.properties](functest/src/test/resources/io/github/gv0tvh0/locust/functest/functest.properties) file. If the URL of the service that is to be exercised is different (e.g. does not run on localhost) this file needs to be updated before running the tests.
 
 To run the functional tests make sure that the service is running and is reachable on the URL endpoint discussed above, and then run `mvn clean install` in the `functest` directory, or run `mvn -P ft clean install` in the project toplevel directory.
 
