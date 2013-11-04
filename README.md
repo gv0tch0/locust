@@ -110,3 +110,4 @@ To run the functional tests make sure that the service is running and is reachab
 - Doctor the JSON API. It is too verbose.
 - Make the request parsing stricter. Currently word values that are not strings (e.g. boolean `true`) are implicitly converted to strings.
 - Make response bodies for invalid requests consistent. The validation that happnens in the application consistently responds with `JSON`. Unfortunately, the validation that we get for free from [Jersey](https://jersey.java.net/) spits back `XML` responses (with proper response codes, nevertheless).
+- Add response parsing and validation to the `functest`s.
