@@ -1,43 +1,39 @@
-LOngest Common sUbSTring   [![Build Status](https://travis-ci.org/gv0tch0/locust.png)](https://travis-ci.org/gv0tch0/locust)
--
+# LOngest Common sUbSTring   [![Build Status](https://travis-ci.org/gv0tch0/locust.png)](https://travis-ci.org/gv0tch0/locust)
 
-### Building
--
+## Building
 
 The implementation is in java. To build please use [maven](http://maven.apache.org/ "Maven Home"). The build is exercised regularly by [travis](https://travis-ci.org/gv0tch0/locust).
 
 Pull the repository and type `mvn` at the top-level repository directory. This would attempt to build the `dflt` profile. This profile includes all modules but the [functest](https://github.com/gv0tch0/locust/tree/master/functest) one. The `functest` build depends on a running locust installation.
 
-##### Build Dependencies
+### Build Dependencies
 
 - Internet connection. This dependency gets relaxed if all of the dependent jars are present in the user's .m2/repository or if the user has access to a local-network maven proxy which has all of the dependencies.
 - Maven 2.2.1+. Builds have been tested with 2.2.1, 3.0.5, and 3.3.1.
 - JDK 1.6+. Builds have been tested with OracleJDK version 1.7 and OpenJDK versions 1.6 and 1.7. For the actual version numbers please refer to the project's [travis-ci](https://travis-ci.org/gv0tch0/locust) page.
 
-### Running
--
+## Running
 
 The service can be run out-of-the-box on any java application container that comes with support for version [3.0](http://jcp.org/en/jsr/detail?id=315) of the Java Servlet API. The service has been tested on [Tomcat 7](http://tomcat.apache.org/download-70.cgi) and [Jetty 8](http://download.eclipse.org/jetty/stable-8/dist/).
 
-##### Tomcat 7
+### Tomcat 7
 
 1. Build the `dflt` profile. Just type `mvn` at the project's toplevel directory.
 2. Copy the `lcs.war` from the project's `webapi/target` folder to tomcat's `webapps` directory.
 3. Start tomcat. To start tomcat in the foreground run `bin/catalina.sh run`. Or just run `bin/catalina.sh` to see the available options. If all is good and the tomcat configuration has not been touched, the service would be available at `http://localhost:8080/lcs`
 
-##### Jetty 8
+### Jetty 8
 
 1. Build the `dflt` profile. Just type `mvn` at the project's toplevel directory.
 2. Copy the `lcs.war` from the project's `webapi/target` folder to jetty's `webapps` directory.
 3. Define a context for the lcs.war in jetty's `contexts` directory.
 4. Start jetty. To start it in the foreground run `bin/jetty.sh run`. Or just run `bin/jetty.sh` to see the available options. If all is good, the jetty configuration has not been touched, and the context for the lcs/war was defined as `/lcs` the service would be available at `http://localhost:8080/lcs/` (note the trailing `/`, which strictly speaking should be required by tomcat as well, since otherwise clients would fail to resolve embedded relative links).
 
-### API
--
+## API
 
 The service exposes a single endpoint, `POST /lcs/`, which allows clients to submit longest common substring requests.
 
-##### Request
+### Request
 
 The body of the request needs to be a [JSON](http://json.org) document and the `Content-type` request header needs to have a value of `application/json`. The document consists of a single field, `setOfStrings`, which is an array of documents. These nested socuments consist of a single field, `value`. For example the request to `POST /lcs/` with the following body:
 ```javascript
@@ -48,9 +44,9 @@ The body of the request needs to be a [JSON](http://json.org) document and the `
 ```
 asks the service to compute the longest common substring for the words `foo` and `bar`.
 
-##### Responses
+### Responses
 
-###### For valid requests
+#### For valid requests
 
 When the request for longest common substring computation passes the validation rules the service responds with a `200 OK` response that contains a JSON document that looks almost the same as the request document with the exception that the array field's name is `lcs` as opposed to `setOfStrings`. The `lcs` array contains the longest common substring(s). It contains multiple substring objects when there are more than one common substring of a greatest length, in which case the substring objects are ordered in string natural ordering.
 
@@ -88,7 +84,7 @@ is the substrings ordered alphabetically:
 }
 ```
 
-###### For invalid requests
+#### For invalid requests
 
 The service responds with a `400 Bad Request` when the request:
 - Does not contain a JSON document in its body.
@@ -100,13 +96,11 @@ The service responds with a `400 Bad Request` when the request:
 
 The service responds with a `415 Unsupported Media Type` response when the `Content-type` header of the request is other than `application/json`.
 
-### Test
--
+## Test
 
 The `core` and `service` modules are covered by [JUnit](http://junit.org) tests. The `functest` module exercises the service using the service's JSON API. The `functest` module is not part of the default `mvn` profile. Building it, means sending requests against a live deployment. It uses [HttpClient](http://hc.apache.org/httpclient-3.x/) to send the requests and `JUnit` to validate the responses.
 
-### TODO
--
+## TODO
 
 - Add a `web` module, which exposes a longest common substring client that could be rendered by a browser and operated by a human.
 - Doctor the JSON API. It is too verbose.
