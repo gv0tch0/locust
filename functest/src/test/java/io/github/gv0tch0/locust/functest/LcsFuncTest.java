@@ -129,8 +129,7 @@ public class LcsFuncTest {
         return response;
     }
 
-    // Using Map.Entry to represent the "response code"-"parsed response entity" tuple. Not really
-    // a key value pair, just did not feel like creating a Tuple2 class.
+    /** Parses locust {@code HttpResponse}s into {@code LcsResponse}s. */
     private static class LcsResponseHandler implements ResponseHandler<Entry<Integer,LcsResponse>> {
         @Override
         public Entry<Integer,LcsResponse> handleResponse(HttpResponse response)
