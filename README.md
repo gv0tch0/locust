@@ -37,7 +37,7 @@ The service exposes a single endpoint, `POST /lcs/`, which allows clients to sub
 
 ### Request
 
-The body of the request needs to be a [JSON](http://json.org) document and the `Content-type` request header needs to have a value of `application/json`. The document consists of a single field, `setOfStrings`, which is an array of documents. These nested socuments consist of a single field, `value`. For example the request to `POST /lcs/` with the following body:
+The body of the request needs to be a [JSON](http://json.org) document and the `Content-type` request header needs to have a value of `application/json`. The document consists of a single field, `setOfStrings`, which is an array of documents. These nested documents consist of a single string field named `value`. For example the request to `POST /lcs/` with the following body:
 ```javascript
 {
   "setOfStrings" : [ { "value" : "foo" },
