@@ -16,6 +16,8 @@ Pull the repository and type `mvn` at the top-level repository directory. This w
 
 The service can be run out-of-the-box on any java application container that comes with support for version [3.0](http://jcp.org/en/jsr/detail?id=315) of the Java Servlet API. The service has been tested on [Tomcat 7](http://tomcat.apache.org/download-70.cgi) and [Jetty 8](http://download.eclipse.org/jetty/stable-8/dist/).
 
+A current version of the service can be found running on RedHat's [OpenShift](https://www.openshift.com) cloud at `http://locust-gv0tch0.rhcloud.com/lcs`.
+
 ### Tomcat 7
 
 1. Build the `dflt` profile. Just type `mvn` at the project's toplevel directory.
@@ -110,4 +112,4 @@ To run the functional tests make sure that the service is running and is reachab
 - Doctor the JSON API. It is too verbose.
 - Make the request parsing stricter. Currently word values that are not strings (e.g. boolean `true`) are implicitly converted to strings.
 - Make response bodies for invalid requests consistent. The validation that happnens in the application consistently responds with `JSON`. Unfortunately, the validation that we get for free from [Jersey](https://jersey.java.net/) spits back `XML` responses (with proper response codes, nevertheless).
-- Fix the [openshift](https://www.openshift.com/) deployment from `travis`.
+- Fix the [OpenShift](https://www.openshift.com/) deployment from `travis`.
