@@ -29,15 +29,15 @@ A current version of the service can be found running on RedHat's [OpenShift](ht
 1. Build the `dflt` profile. Just type `mvn` at the project's toplevel directory.
 2. Copy the `lcs.war` from the project's `webapi/target` folder to jetty's `webapps` directory.
 3. Define a context for the lcs.war in jetty's `contexts` directory.
-4. Start jetty. To start it in the foreground run `bin/jetty.sh run`. Or just run `bin/jetty.sh` to see the available options. If all is good, the jetty configuration has not been touched, and the context for the lcs/war was defined as `/lcs` the service would be available at `http://localhost:8080/lcs/` (note the trailing `/`, which strictly speaking should be required by tomcat as well, since otherwise clients would fail to resolve embedded relative links).
+4. Start jetty. To start it in the foreground run `bin/jetty.sh run`. Or just run `bin/jetty.sh` to see the available options. If all is good, the jetty configuration has not been touched, and the context for the lcs/war was defined as `/lcs` the service would be available at `http://localhost:8080/lcs/` (note the trailing `/`, which strictly speaking should be required by tomcat as well, since otherwise clients would fail to resolve embedded relative links). Jetty responds to requests to `http://localhost:8080/lcs` with a `302 Found` temporary redirect response which has its Location header set to the proper URI.
 
 ## API
 
-The service exposes a single endpoint, `POST /lcs/`, which allows clients to submit longest common substring requests.
+The service exposes a single endpoint, `POST /lcs`, which allows clients to submit longest common substring requests.
 
 ### Request
 
-The body of the request needs to be a [JSON](http://json.org) document and the `Content-type` request header needs to have a value of `application/json`. The document consists of a single field, `setOfStrings`, which is an array of documents. These nested documents consist of a single string field named `value`. For example the request to `POST /lcs/` with the following body:
+The body of the request needs to be a [JSON](http://json.org) document and the `Content-type` request header needs to have a value of `application/json`. The document consists of a single field, `setOfStrings`, which is an array of documents. These nested documents consist of a single string field named `value`. For example the request to `POST /lcs` with the following body:
 ```javascript
 {
   "setOfStrings" : [ { "value" : "foo" },
