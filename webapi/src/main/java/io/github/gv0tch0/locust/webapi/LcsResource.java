@@ -4,12 +4,15 @@ import io.github.gv0tch0.locust.service.LocustService;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -21,9 +24,18 @@ import java.util.List;
  * @author Nik Kolev
  */
 @Path("/")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
 public class LcsResource {
+    /** The API docs {@code URI} that populates the Location header for the {@code GET /lcs} redirect. */
+    private final static URI API_DOC_URI;
+    static {
+        try {
+            API_DOC_URI = new URI("https://github.com/gv0tch0/locust/blob/master/README.md#api");
+        }
+        catch (URISyntaxException e) {
+            throw new RuntimeException("This should never happen.", e);
+        }
+    }
+    
     /** The longest common substring calculator. */
     @Inject
     private LocustService _locustService;
@@ -43,6 +55,8 @@ public class LcsResource {
      *         error to response translation.
      */
     @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response longestCommonSubstring(LcsRequest request) {
         return Response.ok(coerce(_locustService.longestCommonSubstrings(coerce(request)))).build();
     }
@@ -81,5 +95,14 @@ public class LcsResource {
             values.add(new LcsValue(substring));
         }
         return new LcsResponse(values);
+    }
+    
+    /**
+     * @return A 302 (Found) response with Location header set to the API documentation's URI.
+     */
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    public Response apiDocRedirect()  {
+        return Response.temporaryRedirect(API_DOC_URI).build();
     }
 }

@@ -113,4 +113,3 @@ To run the functional tests make sure that the service is running and is reachab
 - Make the request parsing stricter. Currently word values that are not strings (e.g. boolean `true`) are implicitly converted to strings.
 - Make response bodies for invalid requests consistent. The validation that happnens in the application consistently responds with `JSON`. Unfortunately, the validation that we get for free from [Jersey](https://jersey.java.net/) spits back `XML` responses (with proper response codes, nevertheless).
 - Fix the [OpenShift](https://www.openshift.com/) deployment from `travis`.
-- Add support for `GET /lcs` which when sporting an `Accept: text/html` header redirects to `https://github.com/gv0tch0/locust/blob/master/README.md#api`.

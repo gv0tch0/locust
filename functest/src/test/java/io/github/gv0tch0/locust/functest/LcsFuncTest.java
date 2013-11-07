@@ -18,6 +18,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Properties;
 
@@ -30,11 +32,14 @@ public class LcsFuncTest {
     private static final String LCS_URL_KEY         = "lcs.url";
     private static final String LCS_URL_DEFAULT     = "http://localhost:8080/lcs/";
     private static final String APPLICATION_JSON    = ContentType.APPLICATION_JSON.getMimeType();
-    
-    private static String LCS_URL;
+    private static final String APPLICATION_XML     = ContentType.APPLICATION_XML.getMimeType();
+    private static final String TEXT_HTML           = ContentType.TEXT_HTML.getMimeType();
+    private static final String HANDLE_REDIRECTS    = "http.protocol.handle-redirects";
+
+    private static URI LCS_URI;
     
     @BeforeClass
-    public static void initLcsUrl() {
+    public static void initLcsUrl() throws URISyntaxException {
         Properties properties = new Properties();
         try {
             properties.load(LcsFuncTest.class.getResourceAsStream(PROPERTIES_FILENAME));
@@ -42,17 +47,32 @@ public class LcsFuncTest {
         catch (IOException e) {
             // Ignore. Assume properties file issue. Fall back to LCS_URL_DEFAULT.
         }
-        LCS_URL = properties.getProperty(LCS_URL_KEY);
-        if (LCS_URL.isEmpty()) {
-            LCS_URL = LCS_URL_DEFAULT;
+        
+        String lcsUrl = properties.getProperty(LCS_URL_KEY);
+        if (lcsUrl == null || lcsUrl.trim().isEmpty()) {
+            lcsUrl = LCS_URL_DEFAULT;
         }
+        LCS_URI = new URI(lcsUrl.trim());
+    }
+    
+    @Test
+    public void get() throws ClientProtocolException, IOException {
+        HttpResponse httpResponse = Request.Get(LCS_URI)
+                                           .config(HANDLE_REDIRECTS, false)
+                                           .addHeader(HttpHeaders.ACCEPT, TEXT_HTML)
+                                           .execute()
+                                           .returnResponse();
+        assertEquals(HttpStatus.SC_TEMPORARY_REDIRECT,
+                     httpResponse.getStatusLine().getStatusCode());
+        assertEquals("https://github.com/gv0tch0/locust/blob/master/README.md#api",
+                     httpResponse.getHeaders(HttpHeaders.LOCATION)[0].getValue());
     }
     
     @Test
     public void unsupportedMediaType() throws IOException {
         assertEquals(HttpStatus.SC_UNSUPPORTED_MEDIA_TYPE,
-                     Request.Post(LCS_URL)
-                            .addHeader(HttpHeaders.CONTENT_TYPE, "application/xml")
+                     Request.Post(LCS_URI)
+                            .addHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_XML)
                             .execute()
                             .handleResponse(new LcsResponseHandler())
                             .getKey().intValue());
@@ -60,54 +80,54 @@ public class LcsFuncTest {
     
     @Test
     public void noRequestBody() throws IOException {
-        postLcs("", HttpStatus.SC_BAD_REQUEST);
+        validatePost("", HttpStatus.SC_BAD_REQUEST);
     }
     
     @Test
     public void syntacticallyIncorrectJson() throws IOException {
-        postLcs("foo", HttpStatus.SC_BAD_REQUEST);
+        validatePost("foo", HttpStatus.SC_BAD_REQUEST);
     }
     
     @Test
     public void noWords() throws IOException {
-        postLcs("{\"setOfStrings\": []}", HttpStatus.SC_BAD_REQUEST);
+        validatePost("{\"setOfStrings\": []}", HttpStatus.SC_BAD_REQUEST);
     }
     
     @Test
     public void emptyWord() throws IOException {
-        postLcs("{\"setOfStrings\": [ {\"value\": \"foo\"} , {\"value\": \"\"} ]}",
+        validatePost("{\"setOfStrings\": [ {\"value\": \"foo\"} , {\"value\": \"\"} ]}",
                 HttpStatus.SC_BAD_REQUEST);
     }
     
     @Test
     public void duplicateWords() throws IOException {
-        postLcs("{\"setOfStrings\": [ {\"value\": \"foo\"} , {\"value\": \"foo\"} ]}",
+        validatePost("{\"setOfStrings\": [ {\"value\": \"foo\"} , {\"value\": \"foo\"} ]}",
                 HttpStatus.SC_BAD_REQUEST);
     }
     
     @Test
     public void oneWord() throws IOException {
         String entity = "{\"setOfStrings\": [ {\"value\": \"foo\"} ]}";
-        assertEquals("foo", postLcs(entity).getValue().lcs.get(0).value);
+        assertEquals("foo", validatePost(entity).getValue().lcs.get(0).value);
     }
     
     @Test
     public void noLcs() throws IOException {
         String entity = "{\"setOfStrings\": [ {\"value\": \"foo\"} , {\"value\": \"bar\"} ]}";
-        assertEquals(0, postLcs(entity).getValue().lcs.size());
+        assertEquals(0, validatePost(entity).getValue().lcs.size());
     }
     
     @Test
     public void oneLcs() throws IOException {
         String entity = "{\"setOfStrings\": [ {\"value\": \"abc\"} , {\"value\": \"bcd\"} ]}";
-        Entry<Integer,LcsResponse> response = postLcs(entity);
+        Entry<Integer,LcsResponse> response = validatePost(entity);
         assertEquals("bc", response.getValue().lcs.get(0).value);
     }
     
     @Test
     public void multiLcs() throws IOException {
         String entity = "{\"setOfStrings\": [ {\"value\": \"bartender\"} , {\"value\": \"banter\"} ]}";
-        Entry<Integer,LcsResponse> response = postLcs(entity);
+        Entry<Integer,LcsResponse> response = validatePost(entity);
         List<LcsResponsePair> lcs = response.getValue().lcs;
         assertEquals(3, lcs.size());
         assertEquals("ba", lcs.get(0).value);
@@ -115,12 +135,12 @@ public class LcsFuncTest {
         assertEquals("te", lcs.get(2).value);
     }
     
-    private Entry<Integer,LcsResponse> postLcs(String entity) throws IOException {
-        return postLcs(entity, HttpStatus.SC_OK);
+    private Entry<Integer,LcsResponse> validatePost(String entity) throws IOException {
+        return validatePost(entity, HttpStatus.SC_OK);
     }
     
-    private Entry<Integer,LcsResponse> postLcs(String entity, int expectedCode) throws IOException {
-        Entry<Integer,LcsResponse> response = Request.Post(LCS_URL)
+    private Entry<Integer,LcsResponse> validatePost(String entity, int expectedCode) throws IOException {
+        Entry<Integer,LcsResponse> response = Request.Post(LCS_URI)
                                                      .addHeader(HttpHeaders.ACCEPT, APPLICATION_JSON)
                                                      .bodyString(entity, ContentType.APPLICATION_JSON)
                                                      .execute()
