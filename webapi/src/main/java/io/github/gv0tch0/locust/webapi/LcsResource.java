@@ -38,6 +38,9 @@ public class LcsResource {
      *         A 400 (Bad Request) response when the request does not contain a JSON document in its
      *         body, contains a JSON document that is syntactically invalid, or represents a request
      *         that contains no words, one or more empty words, or duplicate words.
+     *         The 4xx responses are generated as a result of the {@code LocustService} throwing
+     *         validation errors, with the {@code ValidationViolationMapper} executing the
+     *         error to response translation.
      */
     @POST
     public Response longestCommonSubstring(LcsRequest request) {
