@@ -15,7 +15,9 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * The longest common substring "resource".
+ * The longest common substring "resource". This is the application's
+ * main and only resource and as such is available at the application's
+ * context root.
  * @author Nik Kolev
  */
 @Path("/")
