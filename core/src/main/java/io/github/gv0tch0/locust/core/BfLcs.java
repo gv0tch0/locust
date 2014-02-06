@@ -97,7 +97,7 @@ public class BfLcs implements Lcs {
             int d =  s2.length() - s1.length();
             if (d == 0) {
                 // Necessary as TreeSet-s take compareTo as gospel in place of equals. Without it different
-                // strings of the same lenght have no way of being members of the TreeSet and we definitely
+                // strings of the same length have no way of being members of the TreeSet and we definitely
                 // want them to be.
                 d = s2.compareTo(s1);
             }
