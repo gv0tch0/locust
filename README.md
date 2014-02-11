@@ -1,4 +1,4 @@
-# LOngest Common sUbSTring   [![Build Status](https://travis-ci.org/gv0tch0/locust.png)](https://travis-ci.org/gv0tch0/locust)
+# LOngest Common sUbSTring   [![Build Status](https://travis-ci.org/gv0tch0/locust.png?branch=master)](https://travis-ci.org/gv0tch0/locust)
 
 ## Building
 
