@@ -29,7 +29,7 @@
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
-      <!-- The defailt profile does not include the functest
+      <!-- The default profile does not include the functest
            module as "building" the functest module requires
            a running locust service. -->
       <modules>
