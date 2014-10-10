@@ -80,53 +80,53 @@ public class LcsFuncTest {
     
     @Test
     public void noRequestBody() throws IOException {
-        validatePost("", HttpStatus.SC_BAD_REQUEST);
+        validatePost("", HttpStatus.SC_NOT_ACCEPTABLE);
     }
     
     @Test
     public void syntacticallyIncorrectJson() throws IOException {
-        validatePost("foo", HttpStatus.SC_BAD_REQUEST);
+        validatePost("foo", HttpStatus.SC_NOT_ACCEPTABLE);
     }
     
     @Test
     public void noWords() throws IOException {
-        validatePost("{\"setOfStrings\": []}", HttpStatus.SC_BAD_REQUEST);
+        validatePost("{\"words\": []}", HttpStatus.SC_NOT_ACCEPTABLE);
     }
     
     @Test
     public void emptyWord() throws IOException {
-        validatePost("{\"setOfStrings\": [ {\"value\": \"foo\"} , {\"value\": \"\"} ]}",
-                HttpStatus.SC_BAD_REQUEST);
+        validatePost("{\"words\": [ {\"value\": \"foo\"} , {\"value\": \"\"} ]}",
+                HttpStatus.SC_NOT_ACCEPTABLE);
     }
     
     @Test
     public void duplicateWords() throws IOException {
-        validatePost("{\"setOfStrings\": [ {\"value\": \"foo\"} , {\"value\": \"foo\"} ]}",
-                HttpStatus.SC_BAD_REQUEST);
+        validatePost("{\"words\": [ {\"value\": \"foo\"} , {\"value\": \"foo\"} ]}",
+                HttpStatus.SC_NOT_ACCEPTABLE);
     }
     
     @Test
     public void oneWord() throws IOException {
-        String entity = "{\"setOfStrings\": [ {\"value\": \"foo\"} ]}";
+        String entity = "{\"words\": [ {\"value\": \"foo\"} ]}";
         assertEquals("foo", validatePost(entity).getValue().lcs.get(0).value);
     }
     
     @Test
     public void noLcs() throws IOException {
-        String entity = "{\"setOfStrings\": [ {\"value\": \"foo\"} , {\"value\": \"bar\"} ]}";
+        String entity = "{\"words\": [ {\"value\": \"foo\"} , {\"value\": \"bar\"} ]}";
         assertEquals(0, validatePost(entity).getValue().lcs.size());
     }
     
     @Test
     public void oneLcs() throws IOException {
-        String entity = "{\"setOfStrings\": [ {\"value\": \"abc\"} , {\"value\": \"bcd\"} ]}";
+        String entity = "{\"words\": [ {\"value\": \"abc\"} , {\"value\": \"bcd\"} ]}";
         Entry<Integer,LcsResponse> response = validatePost(entity);
         assertEquals("bc", response.getValue().lcs.get(0).value);
     }
     
     @Test
     public void multiLcs() throws IOException {
-        String entity = "{\"setOfStrings\": [ {\"value\": \"bartender\"} , {\"value\": \"banter\"} ]}";
+        String entity = "{\"words\": [ {\"value\": \"bartender\"} , {\"value\": \"banter\"} ]}";
         Entry<Integer,LcsResponse> response = validatePost(entity);
         List<LcsResponsePair> lcs = response.getValue().lcs;
         assertEquals(3, lcs.size());
